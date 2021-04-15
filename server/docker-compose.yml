@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  node:
+    container_name: taskly_server
+    image: node:14.3-slim
+    ports:
+      - "3333:3333"
+    working_dir: "/home/node/app"
+    volumes:
+      - ./:/home/node/app
+    command: "yarn dev"
+    networks:
+      - server
+
+  postgres:
+    container_name: taskly_postgres
+    image: postgres
+    restart: always
+    volumes:
+      - pgsql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: server
+      POSTGRES_USER: server
+      POSTGRES_DB: serverdb
+    ports:
+      - 5432:5432
+    networks:
+      - server
+
+networks:
+  server:
+    driver: "bridge"
+
+volumes:
+  pgsql:
