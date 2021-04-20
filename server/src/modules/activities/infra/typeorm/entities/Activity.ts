@@ -65,7 +65,11 @@ class Activity {
   @OneToMany(() => Note, (note) => note.activity)
   notes: Note[];
 
-  @OneToMany(() => Sub_Activity, (sub_activity) => sub_activity.activity)
+  @OneToMany(
+    () => Sub_Activity,
+    (sub_activity) => sub_activity.activity,
+    relationConf,
+  )
   sub_activities: Sub_Activity[];
 
   @CreateDateColumn()

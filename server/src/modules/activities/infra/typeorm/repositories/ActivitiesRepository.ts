@@ -103,6 +103,8 @@ class ActivitiesRepository implements IActivityRepository {
       .innerJoin('activities.requester', 'requester')
       .innerJoin('activities.responsibles', 'responsibles')
       .innerJoin('activities.cities', 'cities')
+      .innerJoin('activities.sub_activities', 'sub_activities')
+      .innerJoin('sub_activities.responsibles', 'subresponsibles')
       .select([
         'activities',
         'requester.id',
@@ -115,6 +117,14 @@ class ActivitiesRepository implements IActivityRepository {
         'cities.name',
         'cities.avatar_url',
         'cities.uf',
+        'sub_activities.id',
+        'sub_activities.title',
+        'sub_activities.deadline',
+        'sub_activities.description',
+        'sub_activities.status',
+        'subresponsibles.id',
+        'subresponsibles.name',
+        'subresponsibles.avatar_url',
       ])
       .getMany();
 
@@ -127,6 +137,8 @@ class ActivitiesRepository implements IActivityRepository {
       .innerJoin('activities.requester', 'requester')
       .innerJoin('activities.responsibles', 'responsibles')
       .innerJoin('activities.cities', 'cities')
+      .innerJoin('activities.sub_activities', 'sub_activities')
+      .innerJoin('sub_activities.responsibles', 'subresponsibles')
       .select([
         'activities',
         'requester.id',
@@ -139,6 +151,14 @@ class ActivitiesRepository implements IActivityRepository {
         'cities.name',
         'cities.avatar_url',
         'cities.uf',
+        'sub_activities.id',
+        'sub_activities.title',
+        'sub_activities.deadline',
+        'sub_activities.description',
+        'sub_activities.status',
+        'subresponsibles.id',
+        'subresponsibles.name',
+        'subresponsibles.avatar_url',
       ])
       .where('requester.id = :requester', { requester: userId })
       .orWhere('responsibles.id = :responsible', {
