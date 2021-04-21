@@ -12,7 +12,9 @@ class DeleteActivityService {
   ) {}
 
   public async execute(activityId: string, requesterId: string): Promise<void> {
-    const activity = await this.activitiesRepository.findBy('id', activityId);
+    const activity = await this.activitiesRepository.findBy('id', activityId, [
+      'requester',
+    ]);
 
     if (!activity) {
       throw new AppError('Invalid data to delete activity!');
@@ -25,6 +27,7 @@ class DeleteActivityService {
     try {
       await this.activitiesRepository.delete(activity);
     } catch (err) {
+      console.log(err);
       throw new AppError('Failed to delete activity!');
     }
   }

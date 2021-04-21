@@ -25,6 +25,7 @@ export enum Status {
 
 const relationConf: RelationOptions = {
   cascade: true,
+  onDelete: 'CASCADE',
 };
 
 @Entity('activities')
