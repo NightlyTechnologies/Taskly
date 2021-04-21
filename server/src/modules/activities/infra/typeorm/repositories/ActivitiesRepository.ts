@@ -103,8 +103,8 @@ class ActivitiesRepository implements IActivityRepository {
       .innerJoin('activities.requester', 'requester')
       .innerJoin('activities.responsibles', 'responsibles')
       .innerJoin('activities.cities', 'cities')
-      .innerJoin('activities.sub_activities', 'sub_activities')
-      .innerJoin('sub_activities.responsibles', 'subresponsibles')
+      .leftJoin('activities.sub_activities', 'sub_activities')
+      .leftJoin('sub_activities.responsibles', 'subresponsibles')
       .select([
         'activities',
         'requester.id',
@@ -137,8 +137,8 @@ class ActivitiesRepository implements IActivityRepository {
       .innerJoin('activities.requester', 'requester')
       .innerJoin('activities.responsibles', 'responsibles')
       .innerJoin('activities.cities', 'cities')
-      .innerJoin('activities.sub_activities', 'sub_activities')
-      .innerJoin('sub_activities.responsibles', 'subresponsibles')
+      .leftJoin('activities.sub_activities', 'sub_activities')
+      .leftJoin('sub_activities.responsibles', 'subresponsibles')
       .select([
         'activities',
         'requester.id',
