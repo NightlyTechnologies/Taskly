@@ -34,7 +34,7 @@ class Sub_ActivitiesRepository implements ISub_ActivityRepository {
     const activity = await this.activitiesRepository.findBy(
       'id',
       sub_activityData.activity,
-      ['responsibles'],
+      ['responsibles', 'requester'],
     );
 
     if (!activity) {
@@ -45,7 +45,10 @@ class Sub_ActivitiesRepository implements ISub_ActivityRepository {
       (responsible) => responsible.id,
     );
 
-    if (!activityResponsibles.includes(userId)) {
+    if (
+      !activityResponsibles.includes(userId)
+      && activity.requester.id !== userId
+    ) {
       throw new AppError(
         'Only activity responsibles can create sub activities!',
         401,
