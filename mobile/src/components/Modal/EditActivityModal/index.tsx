@@ -61,7 +61,7 @@ interface ModalProps {
   isOpen: boolean;
   setModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setDefaultIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  activityAction: (updateData: UpdateData) => void;
+  activityAction: (updateData: UpdateData) => Promise<void>;
   updateData: UpdateData;
   setUpdateData: React.Dispatch<React.SetStateAction<UpdateData>>;
   setDeleteModalIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -87,8 +87,8 @@ const Modal: React.FC<ModalProps> = ({
     setModalIsOpen(false);
   }, [setDeleteModalIsOpen, setModalIsOpen]);
 
-  const handleSubmitUpdate = useCallback(() => {
-    activityAction(updateData);
+  const handleSubmitUpdate = useCallback(async () => {
+    await activityAction(updateData);
     setDefaultIsOpen(false);
   }, [activityAction, updateData, setDefaultIsOpen]);
 
@@ -144,12 +144,12 @@ const DeleteModal: React.FC<DeleteActivityModalProps> = ({
     setEditModalIsOpen(true);
   }, [setEditModalIsOpen, setModalIsOpen]);
 
-  const handleDelete = useCallback(() => {
-    goBack();
-    deleteActivity(activity_id);
+  const handleDelete = useCallback(async () => {
+    await deleteActivity(activity_id);
     setModalIsOpen(false);
     setDefaultIsOpen(false);
     setEditModalIsOpen(false);
+    goBack();
   }, [
     goBack,
     activity_id,

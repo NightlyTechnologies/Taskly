@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from 'react';
 import { formatISO } from 'date-fns';
+import api from '../services/api';
 
 import {
   Activity,
@@ -28,6 +29,7 @@ interface ActivityCities {
   city: City;
   isSelected: boolean;
 }
+
 export interface UpdateData {
   id?: string;
   title?: string;
@@ -53,13 +55,13 @@ interface ActivityContextData {
   allActivities: Activity[];
   selectedActivity: Activity;
   selectActivity: (activity: Activity) => void;
-  addActivity: (updateData: UpdateData) => void;
-  updateActivity: (updateData: UpdateData) => void;
+  addActivity: (updateData: UpdateData) => Promise<void>;
+  updateActivity: (updateData: UpdateData) => Promise<void>;
   updateActivityStatus: (
     activity_id: string,
     status: 'pending' | 'finished',
-  ) => void;
-  deleteActivity: (activity_id: string) => void;
+  ) => Promise<void>;
+  deleteActivity: (activity_id: string) => Promise<void>;
   addSubActivity: (updateData: UpdateSubData) => void;
   updateSubActivity: (updateData: UpdateSubData) => void;
   updateSubActivityStatus: (
@@ -80,6 +82,12 @@ export const ActivityProvider: React.FC = ({ children }) => {
   const [selectedActivity, setSelectedActivity] = useState<Activity>(
     {} as Activity,
   );
+
+  const formatDate = (date: string) => {
+    const splitedDate = date.split('-');
+
+    return `${splitedDate[1]}/${splitedDate[2]}/${splitedDate[0]}`;
+  };
 
   const selectActivity = useCallback((activity: Activity) => {
     setSelectedActivity(activity);
@@ -122,7 +130,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
     const date = updateData.deadline.split('-').map(num => Number(num));
 
     return {
-      id: updateData.id || String(Math.random()),
+      id: updateData.id || '',
       title: updateData.title || 'Atividade',
       description: updateData.description || 'Sem descrição.',
       requester: updateData.requester,
@@ -137,18 +145,45 @@ export const ActivityProvider: React.FC = ({ children }) => {
   }, []);
 
   const addActivity = useCallback(
-    (updateData: UpdateData) => {
+    async (updateData: UpdateData) => {
       const newActivity = parseData(updateData);
 
-      setMyActivities([...myActivities, newActivity]);
-      setAllActivities([...allActivities, newActivity]);
+      const response = await api.post<Activity>('activities', {
+        title: newActivity.title,
+        description: newActivity.description,
+        responsibles: newActivity.responsibles.map(
+          responsible => responsible.id,
+        ),
+        cities: newActivity.cities.map(city => city.id),
+        deadline: formatDate(updateData.deadline),
+      });
+
+      setMyActivities([
+        ...myActivities,
+        { ...newActivity, id: response.data.id },
+      ]);
+      setAllActivities([
+        ...allActivities,
+        { ...newActivity, id: response.data.id },
+      ]);
     },
     [parseData, myActivities, allActivities],
   );
 
   const updateActivity = useCallback(
-    (updateData: UpdateData) => {
+    async (updateData: UpdateData) => {
       const updatedActivity = parseData(updateData);
+
+      await api.post(`activities/${updateData.id}`, {
+        title: updateData.title,
+        description: updateData.description,
+        status: updateData.status,
+        cities: updatedActivity.cities.map(city => city.id),
+        responsibles: updatedActivity.responsibles.map(
+          responsible => responsible.id,
+        ),
+        deadline: formatDate(updateData.deadline),
+      });
 
       const newMyActivities = myActivities.map(activity =>
         activity.id === updatedActivity.id ? updatedActivity : activity,
@@ -166,7 +201,9 @@ export const ActivityProvider: React.FC = ({ children }) => {
   );
 
   const updateActivityStatus = useCallback(
-    (activity_id: string, status: 'pending' | 'finished') => {
+    async (activity_id: string, status: 'pending' | 'finished') => {
+      await api.post(`activities/${activity_id}`, { status });
+
       if (status === 'finished') {
         const newMyActivities = myActivities.filter(
           activity => activity.id !== activity_id,
@@ -215,7 +252,9 @@ export const ActivityProvider: React.FC = ({ children }) => {
   );
 
   const deleteActivity = useCallback(
-    (activity_id: string) => {
+    async (activity_id: string) => {
+      await api.delete(`activities/${activity_id}`);
+
       const newMyActivities = myActivities.filter(
         activity => activity.id !== activity_id,
       );
@@ -251,7 +290,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
       const date = updateData.deadline.split('-').map(num => Number(num));
 
       const newSubActivity = {
-        id: updateData.id || String(Math.random()),
+        id: updateData.id || '',
         title: updateData.title || 'Atividade',
         description: updateData.description || 'Sem descrição.',
         responsibles: selectedResponsibles,
@@ -464,50 +503,50 @@ export const ActivityProvider: React.FC = ({ children }) => {
         description:
           'Importar CAFIRs faltantes das cidades, conferindo a presença do...',
         requester: {
-          id: 'bb55f619-294f-4b48-bb23-c541795922cc',
+          id: 'f333e4fa-b024-4613-aade-73a1e689f02d',
           name: 'Luiz',
           avatar_url:
-            'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+            'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
         },
         responsibles: [
           {
             id: 'a9f0a6c4-49c2-4fc7-8786-c888803421fb',
             name: 'Luiz',
             avatar_url:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
           },
           {
             id: '3abc3adf-b694-4e4e-9af8-eaaaacb4707f',
             name: 'João',
             avatar_url:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
           },
           {
             id: '386afb5f-6562-4ae8-82ee-f14e8afede3a',
             name: 'Nightly',
             avatar_url:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
           },
         ],
         cities: [
           {
             id: 'bcc7067b-b924-4343-ace2-2b684c71394b',
             avatar:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
             name: 'Coronel Domingo Soares',
             uf: 'PR',
           },
           {
             id: '2b3c3517-bd5b-4cab-b2a9-b6dcdf014df5',
             avatar:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
             name: 'Ponta Grossa',
             uf: 'PR',
           },
           {
             id: '3bb08b07-2c82-4393-b9b9-da2cc1e6b251',
             avatar:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
             name: 'Sengés',
             uf: 'PR',
           },
@@ -521,19 +560,19 @@ export const ActivityProvider: React.FC = ({ children }) => {
                 id: 'bb55f619-294f-4b48-bb23-c541795922cc',
                 name: 'Luiz',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
               {
                 id: '3abc3adf-b694-4e4e-9af8-eaaaacb4707f',
                 name: 'João',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
               {
                 id: '386afb5f-6562-4ae8-82ee-f14e8afede3a',
                 name: 'Nightly',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
             ],
             deadline: '2020-07-09T00:21:00.562Z',
@@ -548,13 +587,13 @@ export const ActivityProvider: React.FC = ({ children }) => {
                 id: 'bb55f619-294f-4b48-bb23-c541795922cc',
                 name: 'Luiz',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
               {
                 id: '3abc3adf-b694-4e4e-9af8-eaaaacb4707f',
                 name: 'João',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
             ],
             deadline: '2021-07-18T00:21:00.562Z',
@@ -569,7 +608,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
                 id: 'bb55f619-294f-4b48-bb23-c541795922cc',
                 name: 'Luiz',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
             ],
             deadline: '2020-07-28T00:21:00.562Z',
@@ -589,27 +628,27 @@ export const ActivityProvider: React.FC = ({ children }) => {
           id: 'bb55f619-294f-4b48-bb23-c541795922cc',
           name: 'Luiz',
           avatar_url:
-            'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+            'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
         },
         responsibles: [
           {
             id: 'bb55f619-294f-4b48-bb23-c541795922cc',
             name: 'Luiz',
             avatar_url:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
           },
           {
             id: '3abc3adf-b694-4e4e-9af8-eaaaacb4707f',
             name: 'João',
             avatar_url:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
           },
         ],
         cities: [
           {
             id: 'bcc7067b-b924-4343-ace2-2b684c71394b',
             avatar:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
             name: 'Santa Tereza do Oeste',
             uf: 'PR',
           },
@@ -623,19 +662,19 @@ export const ActivityProvider: React.FC = ({ children }) => {
                 id: 'bb55f619-294f-4b48-bb23-c541795922cc',
                 name: 'Luiz',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
               {
                 id: '3abc3adf-b694-4e4e-9af8-eaaaacb4707f',
                 name: 'João',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
               {
                 id: '386afb5f-6562-4ae8-82ee-f14e8afede3a',
                 name: 'Nightly',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
             ],
             deadline: '2020-07-09T00:21:00.562Z',
@@ -650,13 +689,13 @@ export const ActivityProvider: React.FC = ({ children }) => {
                 id: 'bb55f619-294f-4b48-bb23-c541795922cc',
                 name: 'Luiz',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
               {
                 id: '3abc3adf-b694-4e4e-9af8-eaaaacb4707f',
                 name: 'João',
                 avatar_url:
-                  'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+                  'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
               },
             ],
             deadline: '2020-07-18T00:21:00.562Z',
@@ -676,21 +715,21 @@ export const ActivityProvider: React.FC = ({ children }) => {
           id: 'bb55f619-294f-4b48-bb23-c541795922cc',
           name: 'Luiz',
           avatar_url:
-            'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+            'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
         },
         responsibles: [
           {
             id: 'bb55f619-294f-4b48-bb23-c541795922cc',
             name: 'Luiz',
             avatar_url:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
           },
         ],
         cities: [
           {
             id: 'bcc7067b-b924-4343-ace2-2b684c71394b',
             avatar:
-              'http://192.168.1.22:3333/files/5014ce532048d4e2d24e-Square.png',
+              'http://192.168.1.31:3333/files/5014ce532048d4e2d24e-Square.png',
             name: 'Dionísio Cerqueira',
             uf: 'PR',
           },

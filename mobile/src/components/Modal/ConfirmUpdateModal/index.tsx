@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 import { useActivity } from '../../../hooks/activity';
 
@@ -32,11 +33,14 @@ const Modal: React.FC<ConfirmUpdateModalProps> = ({
   status,
 }) => {
   const { updateActivityStatus } = useActivity();
+  const { goBack } = useNavigation();
 
   const handleUpdateStatus = useCallback(() => {
     updateActivityStatus(activity_id, status);
     setModalIsOpen(false);
-  }, [activity_id, status, updateActivityStatus, setModalIsOpen]);
+
+    status === 'finished' && goBack();
+  }, [activity_id, status, updateActivityStatus, setModalIsOpen, goBack]);
 
   return (
     <ReactModal
