@@ -62,7 +62,7 @@ interface ActivityContextData {
     status: 'pending' | 'finished',
   ) => Promise<void>;
   deleteActivity: (activity_id: string) => Promise<void>;
-  addSubActivity: (updateData: UpdateSubData) => void;
+  addSubActivity: (updateData: UpdateSubData) => Promise<void>;
   updateSubActivity: (updateData: UpdateSubData) => void;
   updateSubActivityStatus: (
     subActivity_id: string,
@@ -270,7 +270,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
   );
 
   const addSubActivity = useCallback(
-    (updateData: UpdateSubData) => {
+    async (updateData: UpdateSubData) => {
       const selectedResponsibles: Responsible[] = updateData.responsibles
         .filter(responsible => {
           if (responsible.isSelected) {
@@ -300,9 +300,20 @@ export const ActivityProvider: React.FC = ({ children }) => {
         status: updateData.status,
       } as SubActivity;
 
-      const newActivity = {
+      const response = await api.post<SubActivity>('sub_activities', {
+        title: newSubActivity.title,
+        description: newSubActivity.description,
+        activity: selectedActivity.id,
+        responsibles: selectedResponsibles.map(responsible => responsible.id),
+        deadline: formatDate(updateData.deadline),
+      });
+
+      const newActivity: Activity = {
         ...selectedActivity,
-        subActivities: [...selectedActivity.subActivities, newSubActivity],
+        subActivities: [
+          ...selectedActivity.subActivities,
+          { ...newSubActivity, id: response.data.id },
+        ],
       };
 
       setSelectedActivity(newActivity);

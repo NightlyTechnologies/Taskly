@@ -184,12 +184,18 @@ const ActivityDetails: React.FC = () => {
           ))}
           {activity.status === 'pending' && (
             <>
-              <SectionTitle>Sub-atividades</SectionTitle>
-              {activity.subActivities.length === 0 && (
-                <Description style={{ textAlign: 'center', marginBottom: 10 }}>
-                  Não há sub-atividades pendentes,{'\n'}
-                  deseja criar uma?
-                </Description>
+              {user.id === activity.requester.id && (
+                <>
+                  <SectionTitle>Sub-atividades</SectionTitle>
+                  {activity.subActivities.length === 0 && (
+                    <Description
+                      style={{ textAlign: 'center', marginBottom: 10 }}
+                    >
+                      Não há sub-atividades pendentes,{'\n'}
+                      deseja criar uma?
+                    </Description>
+                  )}
+                </>
               )}
               {activity.subActivities.map(subActivity => (
                 <SubCard
@@ -234,7 +240,7 @@ const ActivityDetails: React.FC = () => {
                   </Status>
                 </SubCard>
               ))}
-              {userIsResponsible(user.id) && (
+              {user.id === activity.requester.id && (
                 <AddSubActivityButton
                   onPress={() => setCreateModalIsOpen(true)}
                   activeOpacity={0.8}
