@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import CreateActivityService from '@modules/activities/services/CreateActivityService';
 import UpdateActivityService from '@modules/activities/services/UpdateActivityService';
@@ -60,7 +61,7 @@ class ActivitiesController {
 
     const activities = await listAllActivitiesService.execute();
 
-    return response.json(activities);
+    return response.json(classToClass(activities));
   }
 
   public async userIndex(request: Request, response: Response) {
@@ -72,7 +73,7 @@ class ActivitiesController {
 
     const activities = await listUserActivitiesService.execute(userId);
 
-    return response.json(activities);
+    return response.json(classToClass(activities));
   }
 }
 
