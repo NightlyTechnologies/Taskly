@@ -40,10 +40,11 @@ class UpdateActivityService {
       throw new AppError('Just requester can update the activity!', 403);
     }
 
-    const todayString = new Date().toLocaleDateString();
-    const today = new Date(todayString);
+    const todayString = new Date().toLocaleDateString('en-US', {
+      timeZone: 'America/Sao_Paulo',
+    });
 
-    if (deadline !== undefined && deadline < today) {
+    if (deadline && deadline.toLocaleDateString() < todayString) {
       throw new AppError('Invalid deadline');
     }
 
