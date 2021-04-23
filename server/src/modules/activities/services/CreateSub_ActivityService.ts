@@ -17,10 +17,11 @@ class CreateActivityService {
     sub_ActivityData: ICreateSub_ActivityDTO,
     userId: string,
   ) {
-    const todayString = new Date().toLocaleDateString();
-    const today = new Date(todayString);
+    const todayString = new Date().toLocaleDateString('en-US', {
+      timeZone: 'America/Sao_Paulo',
+    });
 
-    if (sub_ActivityData.deadline < today) {
+    if (sub_ActivityData.deadline.toLocaleDateString() < todayString) {
       throw new AppError('Invalid deadline');
     }
 
