@@ -11,7 +11,7 @@ import { Container, AddActivity, Linear } from './styles';
 
 export interface City {
   id: string;
-  avatar: string;
+  avatar_url: string;
   name: string;
   uf: string;
 }
@@ -38,7 +38,7 @@ export interface Activity {
   requester: Responsible;
   responsibles: Responsible[];
   cities: City[];
-  subActivities: SubActivity[];
+  sub_activities: SubActivity[];
   deadline: string;
   status: string;
 }
