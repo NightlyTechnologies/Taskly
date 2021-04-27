@@ -9,6 +9,8 @@ import { useActivity } from '../../hooks/activity';
 
 import { Activity } from '../../pages/Activities/MyActivities';
 
+import upperCaseFirstLetter from '../../utils/upperCaseFirstLetter';
+
 import {
   Container,
   ActivityCard,
@@ -55,6 +57,10 @@ const ActivityList: React.FC<ActivitiesProps> = ({ activities, hasButton }) => {
     [selectActivity, navigate],
   );
 
+  if (!activities) {
+    return <></>;
+  }
+
   return (
     <>
       <Container
@@ -97,7 +103,7 @@ const ActivityList: React.FC<ActivitiesProps> = ({ activities, hasButton }) => {
                 </Deadline>
                 <Cities>
                   {activity.cities.map(city => (
-                    <City key={city.id}>{city.name}</City>
+                    <City key={city.id}>{upperCaseFirstLetter(city.name)}</City>
                   ))}
                 </Cities>
               </Info>
@@ -112,57 +118,59 @@ const ActivityList: React.FC<ActivitiesProps> = ({ activities, hasButton }) => {
                 </StatusBar>
               </Status>
             </ActivityCard>
-            {activity.subActivities[0] !== undefined && (
-              <SubActivity key={activity.subActivities[0].id} style={shadow}>
-                <SubTitle>{activity.subActivities[0].title}</SubTitle>
+            {activity.sub_activities[0] !== undefined && (
+              <SubActivity key={activity.sub_activities[0].id} style={shadow}>
+                <SubTitle>{activity.sub_activities[0].title}</SubTitle>
                 <SubContent>
                   <SubResponsibles>
-                    {activity.subActivities[0].responsibles.map(responsible => (
-                      <Avatar
-                        key={responsible.id}
-                        source={{
-                          uri: responsible.avatar_url,
-                        }}
-                        sub
-                      />
-                    ))}
+                    {activity.sub_activities[0].responsibles.map(
+                      responsible => (
+                        <Avatar
+                          key={responsible.id}
+                          source={{
+                            uri: responsible.avatar_url,
+                          }}
+                          sub
+                        />
+                      ),
+                    )}
                   </SubResponsibles>
                   <SubStatus
                     color={
-                      activity.subActivities[0].status === 'pending'
+                      activity.sub_activities[0].status === 'pending'
                         ? '#ffcd00'
                         : '#777'
                     }
                   >
                     <SubStatusText>
-                      {activity.subActivities[0].status === 'pending'
+                      {activity.sub_activities[0].status === 'pending'
                         ? 'Pendente'
                         : 'Solicitada'}
                     </SubStatusText>
                   </SubStatus>
                 </SubContent>
-                {activity.subActivities[0] !== undefined && (
+                {activity.sub_activities[0] !== undefined && (
                   <>
                     <Ligature source={require('../../assets/ligature.png')} />
                   </>
                 )}
-                {activity.subActivities[1] !== undefined && (
+                {activity.sub_activities[1] !== undefined && (
                   <>
                     <Ligature
                       more
                       source={require('../../assets/ligature2.png')}
                     />
                     <MoreSubActivities>
-                      {`+${activity.subActivities.length - 1}`}
+                      {`+${activity.sub_activities.length - 1}`}
                     </MoreSubActivities>
                   </>
                 )}
               </SubActivity>
             )}
-            {activity.subActivities[1] !== undefined && (
+            {activity.sub_activities[1] !== undefined && (
               <SubActivity belowLevel={1} style={{ ...shadow, elevation: 7 }} />
             )}
-            {activity.subActivities[2] !== undefined && (
+            {activity.sub_activities[2] !== undefined && (
               <SubActivity belowLevel={2} style={{ ...shadow, elevation: 6 }} />
             )}
           </>

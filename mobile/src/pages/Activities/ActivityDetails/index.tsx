@@ -16,6 +16,7 @@ import { useTeam } from '../../../hooks/team';
 
 import formatDate from '../../../utils/formatDate';
 import shadow from '../../../utils/shadow';
+import upperCaseFirstLetter from '../../../utils/upperCaseFirstLetter';
 
 import { SubActivity } from '../MyActivities';
 
@@ -56,7 +57,7 @@ import {
 
 const ActivityDetails: React.FC = () => {
   const { goBack, navigate } = useNavigation();
-  const { selectedActivity: activity, userIsResponsible } = useActivity();
+  const { selectedActivity: activity } = useActivity();
   const { user } = useAuth();
   const { getTeammate } = useTeam();
 
@@ -176,8 +177,11 @@ const ActivityDetails: React.FC = () => {
               key={city.id}
             >
               <CityInfo>
-                <CityAvatar source={{ uri: city.avatar }} />
-                <CityName>{city.name}</CityName>
+                <CityAvatar
+                  resizeMode="contain"
+                  source={{ uri: city.avatar_url }}
+                />
+                <CityName>{upperCaseFirstLetter(city.name)}</CityName>
               </CityInfo>
               <CityUf>{city.uf}</CityUf>
             </City>
@@ -187,7 +191,7 @@ const ActivityDetails: React.FC = () => {
               {user.id === activity.requester.id && (
                 <>
                   <SectionTitle>Sub-atividades</SectionTitle>
-                  {activity.subActivities.length === 0 && (
+                  {activity.sub_activities.length === 0 && (
                     <Description
                       style={{ textAlign: 'center', marginBottom: 10 }}
                     >
@@ -197,7 +201,7 @@ const ActivityDetails: React.FC = () => {
                   )}
                 </>
               )}
-              {activity.subActivities.map(subActivity => (
+              {activity.sub_activities.map(subActivity => (
                 <SubCard
                   onPress={() => handleOpenSubActivityModal(subActivity)}
                   key={subActivity.id}
@@ -258,7 +262,7 @@ const ActivityDetails: React.FC = () => {
               )}
             </>
           )}
-          {activity.subActivities.length === 0 ? (
+          {activity.sub_activities.length === 0 ? (
             <Button onPress={() => setConfirmUpdateModalIsOpen(true)} text={18}>
               {activity.status === 'pending'
                 ? 'Concluir atividade'
