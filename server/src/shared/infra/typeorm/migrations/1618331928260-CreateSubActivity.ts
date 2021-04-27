@@ -52,6 +52,7 @@ implements MigrationInterface {
             columnNames: ['activityId'],
             referencedColumnNames: ['id'],
             referencedTableName: 'activities',
+            onDelete: 'CASCADE',
           },
         ],
       }),
@@ -77,6 +78,7 @@ implements MigrationInterface {
             columnNames: ['subActivitiesId'],
             referencedColumnNames: ['id'],
             referencedTableName: 'sub_activities',
+            onDelete: 'CASCADE',
           },
           {
             columnNames: ['usersId'],

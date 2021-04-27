@@ -76,6 +76,7 @@ export default class CreateActivity1616161529132 implements MigrationInterface {
             columnNames: ['activitiesId'],
             referencedColumnNames: ['id'],
             referencedTableName: 'activities',
+            onDelete: 'CASCADE',
           },
           {
             columnNames: ['usersId'],
@@ -106,6 +107,7 @@ export default class CreateActivity1616161529132 implements MigrationInterface {
             columnNames: ['activitiesId'],
             referencedColumnNames: ['id'],
             referencedTableName: 'activities',
+            onDelete: 'CASCADE',
           },
           {
             columnNames: ['citiesId'],
