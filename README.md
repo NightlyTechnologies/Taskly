@@ -1,7 +1,7 @@
 <br />
 
 <p align="center">
-  <img alt="Logo" src="./.github/logo.png" width="200px" />
+  <img alt="Logo" src="./.github/logo.png" width="150px" />
 </p>
 
 <h1 align="center" style="text-align: center;">Taskly</h1>
@@ -11,16 +11,16 @@
 		<img alt="Author" src="https://img.shields.io/badge/author-Nightly%20Technologies-ED3F47?style=flat" />
 	</a>
 	<a href="#">
-		<img alt="Languages" src="https://img.shields.io/github/languages/count/NightlyTechnologies/Taskly?color=%23FF872C&style=flat-" />
+		<img alt="Languages" src="https://img.shields.io/github/languages/count/NightlyTechnologies/Taskly?color=%ED3F47&style=flat-" />
 	</a>
 	<a href="hhttps://github.com/NightlyTechnologies/Taskly/stargazers">
-		<img alt="Stars" src="https://img.shields.io/github/stars/NightlyTechnologies/Taskly?color=FF872C&style=flat" />
+		<img alt="Stars" src="https://img.shields.io/github/stars/NightlyTechnologies/Taskly?color=ED3F47&style=flat" />
 	</a>
 	<a href="https://github.com/NightlyTechnologies/Taskly/network/members">
-		<img alt="Forks" src="https://img.shields.io/github/forks/NightlyTechnologies/Taskly?color=%23FF872C&style=flat" />
+		<img alt="Forks" src="https://img.shields.io/github/forks/NightlyTechnologies/Taskly?color=%ED3F47&style=flat" />
 	</a>
 	<a href="https://github.com/NightlyTechnologies/Taskly/graphs/contributors">
-		<img alt="Contributors" src="https://img.shields.io/github/contributors/NightlyTechnologies/Taskly?color=FF872C&style=flat" />
+		<img alt="Contributors" src="https://img.shields.io/github/contributors/NightlyTechnologies/Taskly?color=ED3F47&style=flat" />
 	</a>
 </p>
 
@@ -34,12 +34,12 @@
 
 <p align="center">
   <img alt="Banner" src="./.github/banner.png" />
-  <img alt="Activities list" src="./.github/activities1.png" width="250px" />
-  <img alt="City list" src="./.github/cities1.png" width="250px" />
-  <img alt="Profile" src="./.github/profile.png" width="250px" />
-  <img alt="Activities details" src="./.github/activities2.png" width="250px" />
-  <img alt="City details" src="./.github/cities2.png" width="250px" />
-  <img alt="Login" src="./.github/login.png" width="250px" />
+  <img alt="Activities list" src="./.github/activities1.png" width="314px" />
+  <img alt="City list" src="./.github/cities1.png" width="314px" />
+  <img alt="Profile" src="./.github/profile.png" width="314px" />
+  <img alt="Activities details" src="./.github/activities2.png" width="314px" />
+  <img alt="City details" src="./.github/cities2.png" width="314px" />
+  <img alt="Login" src="./.github/login.png" width="314px" />
 </p>
 
 <br />
