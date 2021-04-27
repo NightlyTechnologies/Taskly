@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
 import CreateSub_ActivityService from '@modules/activities/services/CreateSub_ActivityService';
+import DeleteSub_ActivityService from '@modules/activities/services/DeleteSub_ActivityService';
 
 class Sub_ActivitiesController {
   public async create(request: Request, response: Response) {
@@ -20,6 +21,18 @@ class Sub_ActivitiesController {
     );
 
     return response.json(sub_activity);
+  }
+
+  public async delete(request: Request, response: Response) {
+    const deleteSub_Activity = container.resolve(DeleteSub_ActivityService);
+
+    const { id } = request.params;
+
+    const user = request.user.id;
+
+    await deleteSub_Activity.execute(id, user);
+
+    return response.sendStatus(204);
   }
 }
 

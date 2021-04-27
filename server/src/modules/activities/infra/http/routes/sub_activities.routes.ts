@@ -30,4 +30,11 @@ router.post(
   sub_activitiesController.create,
 );
 
+router.delete(
+  '/:id',
+  uuidValidator,
+  ensureAuthenticated,
+  sub_activitiesController.delete,
+);
+
 export default router;
