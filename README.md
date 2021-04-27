@@ -34,12 +34,12 @@
 
 <p align="center">
   <img alt="Banner" src="./.github/banner.png" />
-  <img alt="Activities list" src="./.github/activities1.png" width="280px" />
-  <img alt="City list" src="./.github/cities1.png" width="280px" />
-  <img alt="Profile" src="./.github/profile.png" width="280px" />
-  <img alt="Activities details" src="./.github/activities2.png" width="280px" />
-  <img alt="City details" src="./.github/cities2.png" width="280px" />
-  <img alt="Login" src="./.github/login.png" width="280px" />
+  <img alt="Activities list" src="./.github/activities1.png" width="260px" />
+  <img alt="City list" src="./.github/cities1.png" width="260px" />
+  <img alt="Profile" src="./.github/profile.png" width="260px" />
+  <img alt="Activities details" src="./.github/activities2.png" width="260px" />
+  <img alt="City details" src="./.github/cities2.png" width="260px" />
+  <img alt="Login" src="./.github/login.png" width="260px" />
 </p>
 
 <br />
