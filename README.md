@@ -97,14 +97,12 @@ In case you don't have an SSH key on your GitHub account, you can clone the proj
 1. Open the **server** folder an run ```yarn``` to install the dependencies;
 2. Rename the ```.env.example``` to ```.env``` and set a secret to your app;
 3. Rename the ```ormconfig.example.json``` to ```ormconfig.json``` and add your postgres **port**, **user** and **password** in the archive;
-4. Create a database named ```gobarber``` on your postgres;
-5. Run ```yarn typeorm migration:run``` to run the migrations to your database;
-6. Create a database named ```gobarber``` on your mongoDB;
-7. If you don't use the default port to mongoDB, you'll need to set the port on your ```ormconfig.json```;
-8. You don't need to configure the redis since you use the default port and don't have an password. If you have a password or use a diferent port, you'll need to set them on ```.env```;
-9. If all goes well, run ```yarn dev:server``` to open the development server on port 3333.
-10. **Extra:** if you want to use AWS SES, change the maildriver to ```ses``` on ```.env``` file (you'll also need to set your AWS keys to use the service); 
-11. **Extra:** if you want to use AWS S3, change the storagedriver to ```s3``` on ```.env``` file (you'll also need to set your AWS keys to use the service); 
+4. Run docker containers using ```docker-compose up -d```;
+6. Create a database named ```taskly``` on your postgres;
+7. Run ```yarn typeorm migration:run``` to run the migrations to your database;
+8. If all goes well, the development server will be running on port 3333.
+11. **Extra:** if you want to see node logs, you can do it through ```docker logs -f taskly_server```; 
+12. **Extra:** if you want to access postgress from cli, run the command ```docker exec -it taskly_postgres psql -d taskly -U user_name -w```; 
 
 
 ### Mobile
