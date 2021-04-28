@@ -102,7 +102,7 @@ In case you don't have an SSH key on your GitHub account, you can clone the proj
 7. Run ```yarn typeorm migration:run``` to run the migrations to your database;
 8. If all goes well, the development server will be running on port 3333.
 11. **Extra:** if you want to see node logs, you can do it through ```docker logs -f taskly_server```; 
-12. **Extra:** if you want to access postgress from cli, run the command ```docker exec -it taskly_postgres psql -d taskly -U user_name -w```; 
+12. **Extra:** if you want to access postgres from cli, run the command ```docker exec -it taskly_postgres psql -d taskly -U user_name -w```; 
 
 
 ### Mobile
