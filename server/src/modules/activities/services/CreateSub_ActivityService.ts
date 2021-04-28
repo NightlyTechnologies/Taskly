@@ -4,6 +4,8 @@ import { inject, injectable } from 'tsyringe';
 import ICreateSub_ActivityDTO from '@modules/activities/dtos/ICreateSub_ActivityDTO';
 import ISub_ActivitiesRepository from '@modules/activities/repositories/ISub_ActivitiesRepository';
 
+import isValidDate from '@shared/infra/http/utils/isValidDate';
+
 import AppError from '@shared/errors/AppError';
 
 @injectable()
@@ -17,11 +19,7 @@ class CreateActivityService {
     sub_ActivityData: ICreateSub_ActivityDTO,
     userId: string,
   ) {
-    const todayString = new Date().toLocaleDateString('en-US', {
-      timeZone: 'America/Sao_Paulo',
-    });
-
-    if (sub_ActivityData.deadline.toLocaleDateString() < todayString) {
+    if (isValidDate(sub_ActivityData.deadline)) {
       throw new AppError('Invalid deadline');
     }
 
