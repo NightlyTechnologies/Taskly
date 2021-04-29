@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { container } from 'tsyringe';
 
 import CreateSub_ActivityService from '@modules/activities/services/CreateSub_ActivityService';
+import UpdateSub_ActivityService from '@modules/activities/services/UpdateSub_ActivityService';
 import DeleteSub_ActivityService from '@modules/activities/services/DeleteSub_ActivityService';
 
 class Sub_ActivitiesController {
@@ -17,6 +18,28 @@ class Sub_ActivitiesController {
 
     const sub_activity = await createSub_ActivityService.execute(
       sub_activityData,
+      user,
+    );
+
+    return response.json(sub_activity);
+  }
+
+  public async update(request: Request, response: Response) {
+    const updateSub_ActivityService = container.resolve(
+      UpdateSub_ActivityService,
+    );
+
+    const user = request.user.id;
+
+    const { id } = request.params;
+
+    const sub_activityData = request.body;
+
+    const sub_activity = await updateSub_ActivityService.execute(
+      {
+        id,
+        ...sub_activityData,
+      },
       user,
     );
 

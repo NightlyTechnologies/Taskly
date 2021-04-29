@@ -10,6 +10,8 @@ import AppError from '@shared/errors/AppError';
 
 import ActivitiesRepository from 'modules/activities/infra/typeorm/repositories/ActivitiesRepository';
 import User from '@modules/users/infra/typeorm/entities/User';
+import removeUndefined from '@shared/infra/http/utils/removeUndefined';
+import IUpdateSub_ActivityDTO from '@modules/activities/dtos/IUpdateSub_ActivityDTO';
 
 class Sub_ActivitiesRepository implements ISub_ActivityRepository {
   private ormSub_ActivityRepository: Repository<Sub_Activity>;
@@ -77,6 +79,33 @@ class Sub_ActivitiesRepository implements ISub_ActivityRepository {
 
   public async delete(sub_activity: Sub_Activity): Promise<void> {
     await this.ormSub_ActivityRepository.remove(sub_activity);
+  }
+
+  public async update(
+    sub_activity: Sub_Activity,
+    sub_activityData: IUpdateSub_ActivityDTO,
+  ): Promise<Sub_Activity> {
+    const filteredData = removeUndefined(sub_activityData);
+
+    const responsibles = sub_activityData.responsibles?.map(
+      (responsible: string) => {
+        const user = new User();
+        user.id = responsible;
+        return user;
+      }
+    );
+
+    const mergedSub_Activity: Sub_Activity = {
+      ...sub_activity,
+      ...filteredData,
+      responsibles,
+    };
+
+    const finalSub_Activity = removeUndefined(mergedSub_Activity);
+
+    await this.ormSub_ActivityRepository.save(finalSub_Activity);
+
+    return finalSub_Activity;
   }
 
   public async findBy(
