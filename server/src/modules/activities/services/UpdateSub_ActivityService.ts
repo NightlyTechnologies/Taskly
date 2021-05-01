@@ -8,12 +8,15 @@ import IUpdateSub_ActivityDTO from '@modules/activities/dtos/IUpdateSub_Activity
 import isValidDate from '@shared/infra/http/utils/isValidDate';
 
 import AppError from '@shared/errors/AppError';
+import IActivitiesRepository from '@modules/activities/repositories/IActivitiesRepository';
 
 @injectable()
 class UpdateSub_ActivityService {
   constructor(
     @inject('Sub_ActivitiesRepository')
     private sub_ActivitiesRepository: ISub_ActivitiesRepository,
+    @inject('ActivitiesRepository')
+    private activitiesRepository: IActivitiesRepository,
   ) {}
 
   public async execute(
@@ -29,9 +32,20 @@ class UpdateSub_ActivityService {
   ): Promise<Sub_Activity> {
     const sub_activity = await this.sub_ActivitiesRepository.findBy('id', id, [
       'responsibles',
+      'activity',
     ]);
 
     if (!sub_activity) {
+      throw new AppError('Sub Actvity not found');
+    }
+
+    const activity = await this.activitiesRepository.findBy(
+      'id',
+      sub_activity.activity.id,
+      ['requester', 'responsibles'],
+    );
+
+    if (!activity) {
       throw new AppError('Sub Actvity not found');
     }
 
@@ -39,9 +53,14 @@ class UpdateSub_ActivityService {
       !sub_activity.responsibles
         .map((responsible): string => responsible.id)
         .includes(requesterId)
+      && !activity.responsibles
+        .map((responsible): string => responsible.id)
+        .includes(requesterId)
+      && activity.requester.id !== requesterId
     ) {
       throw new AppError(
-        'Just sub_activity responsibles can update the sub_activity!',
+        'You are not allowed to update this sub_activity!',
+        403,
       );
     }
 

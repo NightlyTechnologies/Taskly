@@ -3,32 +3,47 @@ import { inject, injectable } from 'tsyringe';
 import ISub_ActivitiesRepository from '@modules/activities/repositories/ISub_ActivitiesRepository';
 
 import AppError from '@shared/errors/AppError';
+import IActivitiesRepository from '@modules/activities/repositories/IActivitiesRepository';
 
 @injectable()
 class DeleteSub_ActivityService {
   constructor(
     @inject('Sub_ActivitiesRepository')
     private sub_ActivitiesRepository: ISub_ActivitiesRepository,
+    @inject('ActivitiesRepository')
+    private activitiesRepository: IActivitiesRepository,
   ) {}
 
   public async execute(activityId: string, requesterId: string): Promise<void> {
     const sub_activity = await this.sub_ActivitiesRepository.findBy(
       'id',
       activityId,
-      ['responsibles'],
+      ['responsibles', 'activity'],
     );
 
     if (!sub_activity) {
       throw new AppError('Invalid sub_activity!');
     }
 
+    const activity = await this.activitiesRepository.findBy(
+      'id',
+      sub_activity.activity.id,
+      ['requester', 'responsibles'],
+    );
+
+    if (!activity) {
+      throw new AppError('Sub Actvity not found');
+    }
+
     if (
-      !sub_activity.responsibles
+      !activity.responsibles
         .map((responsible): string => responsible.id)
         .includes(requesterId)
+      && activity.requester.id !== requesterId
     ) {
       throw new AppError(
-        'Just activity responsibles can delete the sub_activity!',
+        'You are not allowed to update this sub_activity!',
+        403,
       );
     }
 
