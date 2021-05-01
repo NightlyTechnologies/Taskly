@@ -31,7 +31,7 @@ class ActivitiesController {
 
     await deleteActivityService.execute(id, requester);
 
-    return response.sendStatus(200);
+    return response.sendStatus(204);
   }
 
   public async update(request: Request, response: Response) {

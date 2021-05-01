@@ -30,4 +30,29 @@ router.post(
   sub_activitiesController.create,
 );
 
+router.delete(
+  '/:id',
+  uuidValidator,
+  ensureAuthenticated,
+  sub_activitiesController.delete,
+);
+
+router.put(
+  '/:id',
+  uuidValidator,
+  celebrate({
+    [Segments.BODY]: {
+      title: Joi.string().min(3),
+      description: Joi.string(),
+      deadline: Joi.date(),
+      responsibles: Joi.array()
+        .min(1)
+        .items(Joi.string().guid({ version: ['uuidv4'] })),
+      status: Joi.string().valid('requested', 'pending', 'finished'),
+    },
+  }),
+  ensureAuthenticated,
+  sub_activitiesController.update,
+);
+
 export default router;

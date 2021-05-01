@@ -27,7 +27,6 @@ class DeleteActivityService {
     try {
       await this.activitiesRepository.delete(activity);
     } catch (err) {
-      console.log(err);
       throw new AppError('Failed to delete activity!');
     }
   }
