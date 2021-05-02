@@ -40,7 +40,7 @@ router.get(
   activitiesController.userIndex,
 );
 
-router.post(
+router.put(
   '/:id',
   uuidValidator,
   ensureAuthenticated,
