@@ -168,8 +168,8 @@ const EditModal: React.FC<EditSubActivityModalProps> = ({
   const handleSubmit = useCallback(() => {
     updateSubActivity(updateData);
     setModalIsOpen(false);
-    setDefaultIsOpen(false);
     setSubActivityModalIsOpen(false);
+    setDefaultIsOpen(false);
   }, [
     updateData,
     updateSubActivity,
@@ -221,11 +221,11 @@ const DeleteModal: React.FC<DeleteSubActivityModalProps> = ({
     setSubActivityModalIsOpen(true);
   }, [setSubActivityModalIsOpen, setDefaultIsOpen]);
 
-  const handleDelete = useCallback(() => {
-    deleteSubActivity(subActivity_id);
+  const handleDelete = useCallback(async () => {
+    await deleteSubActivity(subActivity_id);
     setModalIsOpen(false);
-    setDefaultIsOpen(false);
     setSubActivityModalIsOpen(false);
+    setDefaultIsOpen(false);
   }, [
     subActivity_id,
     deleteSubActivity,
