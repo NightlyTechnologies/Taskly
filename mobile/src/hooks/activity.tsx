@@ -63,12 +63,12 @@ interface ActivityContextData {
   ) => Promise<void>;
   deleteActivity: (activity_id: string) => Promise<void>;
   addSubActivity: (updateData: UpdateSubData) => Promise<void>;
-  updateSubActivity: (updateData: UpdateSubData) => void;
+  updateSubActivity: (updateData: UpdateSubData) => Promise<void>;
   updateSubActivityStatus: (
     subActivity_id: string,
     status: 'pending' | 'finished',
-  ) => void;
-  deleteSubActivity: (subActivity_id: string) => void;
+  ) => Promise<void>;
+  deleteSubActivity: (subActivity_id: string) => Promise<void>;
   userIsResponsible: (user_id: string) => boolean;
 }
 
@@ -174,7 +174,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
     async (updateData: UpdateData) => {
       const updatedActivity = parseData(updateData);
 
-      await api.post(`activities/${updateData.id}`, {
+      await api.put(`activities/${updateData.id}`, {
         title: updateData.title,
         description: updateData.description,
         cities: updatedActivity.cities.map(city => city.id),
@@ -201,7 +201,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
 
   const updateActivityStatus = useCallback(
     async (activity_id: string, status: 'pending' | 'finished') => {
-      await api.post(`activities/${activity_id}`, { status });
+      await api.put(`activities/${activity_id}`, { status });
 
       if (status === 'finished') {
         const newMyActivities = myActivities.filter(
@@ -290,7 +290,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
 
       const newSubActivity = {
         id: updateData.id || '',
-        title: updateData.title || 'Atividade',
+        title: updateData.title || 'Sub atividade',
         description: updateData.description || 'Sem descrição.',
         responsibles: selectedResponsibles,
         deadline: formatISO(
@@ -332,7 +332,7 @@ export const ActivityProvider: React.FC = ({ children }) => {
   );
 
   const updateSubActivity = useCallback(
-    (updateData: UpdateSubData) => {
+    async (updateData: UpdateSubData) => {
       const selectedResponsibles: Responsible[] = updateData.responsibles
         .filter(responsible => {
           if (responsible.isSelected) {
@@ -351,12 +351,22 @@ export const ActivityProvider: React.FC = ({ children }) => {
 
       const date = updateData.deadline.split('-').map(num => Number(num));
 
+      const response = await api.put<SubActivity>(
+        `sub_activities/${updateData.id}`,
+        {
+          title: updateData.title,
+          description: updateData.description,
+          responsibles: selectedResponsibles.map(responsible => responsible.id),
+          deadline: formatDate(updateData.deadline),
+        },
+      );
+
       const sub_activities = selectedActivity.sub_activities.map(
         subActivity => {
           if (subActivity.id === updateData.id) {
             return {
-              id: updateData.id || String(Math.random()),
-              title: updateData.title || 'Atividade',
+              id: response.data.id,
+              title: updateData.title || 'Sub atividade',
               description: updateData.description || 'Sem descrição.',
               responsibles: selectedResponsibles,
               deadline: formatISO(
@@ -397,7 +407,9 @@ export const ActivityProvider: React.FC = ({ children }) => {
   );
 
   const updateSubActivityStatus = useCallback(
-    (subActivity_id: string, status: 'pending' | 'finished') => {
+    async (subActivity_id: string, status: 'pending' | 'finished') => {
+      await api.put(`sub_activities/${subActivity_id}`, { status });
+
       if (status === 'finished') {
         const sub_activities = selectedActivity.sub_activities.filter(
           subActivity => subActivity.id !== subActivity_id,
@@ -467,7 +479,9 @@ export const ActivityProvider: React.FC = ({ children }) => {
   );
 
   const deleteSubActivity = useCallback(
-    (subActivity_id: string) => {
+    async (subActivity_id: string) => {
+      await api.delete(`sub_activities/${subActivity_id}`);
+
       const sub_activities = selectedActivity.sub_activities.filter(
         subActivity => subActivity.id !== subActivity_id,
       );
@@ -500,8 +514,10 @@ export const ActivityProvider: React.FC = ({ children }) => {
 
   const userIsResponsible = useCallback(
     (user_id: string) => {
-      return selectedActivity.responsibles.some(
-        responsible => responsible.id === user_id,
+      return (
+        selectedActivity.responsibles.some(
+          responsible => responsible.id === user_id,
+        ) || selectedActivity.requester.id === user_id
       );
     },
     [selectedActivity],
