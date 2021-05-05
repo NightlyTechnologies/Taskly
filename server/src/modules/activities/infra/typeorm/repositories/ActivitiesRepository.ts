@@ -1,4 +1,4 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Brackets } from 'typeorm';
 
 import IActivityRepository from '@modules/activities/repositories/IActivitiesRepository';
 import ICreateActivityDTO from '@modules/activities/dtos/ICreateActivityDTO';
@@ -126,6 +126,9 @@ class ActivitiesRepository implements IActivityRepository {
         'subresponsibles.name',
         'subresponsibles.avatar_url',
       ])
+      .where('activities.status != :status ', {
+        status: 'finished',
+      })
       .getMany();
 
     return activities;
@@ -160,12 +163,20 @@ class ActivitiesRepository implements IActivityRepository {
         'subresponsibles.name',
         'subresponsibles.avatar_url',
       ])
-      .where('requester.id = :requester', { requester: userId })
-      .orWhere('responsibles.id = :responsible', {
-        responsible: userId,
+      .where('activities.status != :status ', {
+        status: 'finished',
       })
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where('requester.id = :requester', { requester: userId }).orWhere(
+            'responsibles.id = :responsible',
+            {
+              responsible: userId,
+            },
+          );
+        }),
+      )
       .getMany();
-
     return userActivities;
   }
 
