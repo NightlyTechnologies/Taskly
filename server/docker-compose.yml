@@ -16,7 +16,6 @@ services:
   postgres:
     container_name: taskly_postgres
     image: postgres
-    restart: always
     volumes:
       - pgsql:/var/lib/postgresql/data
     environment:
