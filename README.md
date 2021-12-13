@@ -135,7 +135,7 @@ If you know the origin of the error and know how to resolve it, please, send us 
 
 # :book: License
 
-Released in 2020.
+Released in 2021.
 
 This project is under the [license](https://github.com/NightlyTechnologies/Taskly/blob/master/LICENSE).
 
